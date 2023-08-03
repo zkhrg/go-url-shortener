@@ -1,13 +1,21 @@
 package main
 
+import (
+	"fmt"
+	"go-url-shortener/internal/config"
+)
+
 func main() {
-	// TODO: init config
+	// TODO: init config: cleanenv
+	cfg := config.MustLoad()
 
-	// TODO: init logger
+	fmt.Println(cfg)
 
-	// TODO: init storage
+	// TODO: init logger: slog
 
-	// TODO: init router
+	// TODO: init storage: sqlite3
+
+	// TODO: init router: chi, "chi render"
 
 	// TODO: run server
 
