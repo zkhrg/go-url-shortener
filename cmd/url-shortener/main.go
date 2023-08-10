@@ -35,7 +35,15 @@ func main() {
 		os.Exit(1)
 	}
 
-	_ = storage
+	link, err := storage.GetURL("google")
+
+	if err != nil {
+		log.Error("failed to get url by alias", sl.Err(err))
+		os.Exit(1)
+	}
+
+	fmt.Printf("link by alias: %s\n", link)
+
 	// TODO: init router: chi, "chi render"
 
 	// TODO: run server
