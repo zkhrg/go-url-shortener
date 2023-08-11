@@ -1,7 +1,6 @@
 package save
 
 import (
-	"encoding/json"
 	resp "go-url-shortener/internal/lib/api/response"
 	"go-url-shortener/internal/lib/logger/sl"
 	"net/http"
@@ -28,10 +27,10 @@ type URLSaver interface {
 func New(log *slog.Logger, urlSaver URLSaver) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		const op = "handlers.url.save.New()"
- 
+
 		log = log.With(
 			slog.String("op", op),
-			slog.String("request_id", middleware.GetReqID(r.Context()))
+			slog.String("request_id", middleware.GetReqID(r.Context())),
 		)
 
 		var req Request
