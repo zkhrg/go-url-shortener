@@ -3,10 +3,15 @@ package main
 import (
 	"fmt"
 	"go-url-shortener/internal/config"
+	"go-url-shortener/internal/lib/logger/handlers/slogpretty"
 	"go-url-shortener/internal/lib/logger/sl"
 	"go-url-shortener/internal/storage/sqlite"
 	"os"
 
+	mwLogger "go-url-shortener/internal/http-server/middleware/logger"
+
+	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
 	"golang.org/x/exp/slog"
 )
 
@@ -35,16 +40,16 @@ func main() {
 		os.Exit(1)
 	}
 
-	link, err := storage.GetURL("google")
-
-	if err != nil {
-		log.Error("failed to get url by alias", sl.Err(err))
-		os.Exit(1)
-	}
-
-	fmt.Printf("link by alias: %s\n", link)
-
 	// TODO: init router: chi, "chi render"
+	router := chi.NewRouter()
+
+	router.Use(middleware.RequestID)
+	router.Use(middleware.Logger)
+	router.Use(mwLogger.New(log))
+	router.Use(middleware.Recoverer)
+	router.Use(middleware.URLFormat)
+
+	// middleware
 
 	// TODO: run server
 }
@@ -68,4 +73,16 @@ func setLogger(env string) *slog.Logger {
 	}
 
 	return log
+}
+
+func setupPrettySlog() *slog.Logger {
+	opts := slogpretty.PrettyHandlerOptions{
+		SlogOpts: &slog.HandlerOptions{
+			Level: slog.LevelDebug,
+		},
+	}
+
+	handler := opts.NewPrettyHandler(os.Stdout)
+
+	return slog.New(handler)
 }
